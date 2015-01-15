@@ -1,0 +1,30 @@
+From 93c876a85b650c3e05d6042cd1bf4e5008fdebc5 Mon Sep 17 00:00:00 2001
+From: Bastien Nocera <hadess@hadess.net>
+Date: Thu, 10 Jan 2013 09:13:19 +0100
+Subject: [PATCH] Allow PulseAudio to connect by default
+
+Disable the socket by default, it is enabled by default.
+
+https://bugzilla.redhat.com/show_bug.cgi?id=969385#c4
+---
+ audio/audio.conf | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/audio/audio.conf b/audio/audio.conf
+index fd6092a..a78f609 100644
+--- a/audio/audio.conf
++++ b/audio/audio.conf
+@@ -4,6 +4,10 @@
+ # particular interface
+ [General]
+ 
++# Allow PulseAudio to connect by default
++# https://bugzilla.redhat.com/show_bug.cgi?id=969385#c4
++Disable=Socket
++
+ # Switch to master role for incoming connections (defaults to true)
+ #Master=true
+ 
+-- 
+1.8.4.2
+

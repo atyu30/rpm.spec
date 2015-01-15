@@ -1,0 +1,867 @@
+From d4e135d9d0190e2949b17004598128d5f02a3603 Mon Sep 17 00:00:00 2001
+From: Fedora ImageMagick maintainers <ImageMagick-owner@fedoraproject.org>
+Date: Thu, 25 Jul 2013 15:20:37 +0200
+Subject: [PATCH] Fix man page scan results
+
+---
+ utilities/animate.1.in   |  5 +++++
+ utilities/compare.1.in   |  6 ++++++
+ utilities/composite.1.in | 10 ++++++++++
+ utilities/convert.1.in   | 30 ++++++++++++++++++++++++++++--
+ utilities/display.1.in   |  7 +++++++
+ utilities/identify.1.in  |  7 ++++++-
+ utilities/import.1.in    |  2 ++
+ utilities/mogrify.1.in   | 43 ++++++++++++++++++++++++++++++++++++++-----
+ utilities/montage.1.in   | 11 +++++++++++
+ utilities/stream.1.in    |  2 ++
+ wand/animate.c           |  3 +++
+ wand/compare.c           |  2 ++
+ wand/composite.c         |  2 ++
+ wand/convert.c           |  2 ++
+ wand/display.c           |  3 +++
+ wand/identify.c          |  4 ++++
+ wand/import.c            |  1 +
+ wand/mogrify.c           | 12 ++++++++++++
+ wand/montage.c           |  4 +++-
+ 19 files changed, 147 insertions(+), 9 deletions(-)
+
+diff --git a/utilities/animate.1.in b/utilities/animate.1.in
+index 14245c0..1b73ee6 100644
+--- a/utilities/animate.1.in
++++ b/utilities/animate.1.in
+@@ -10,6 +10,8 @@ The \fBanimate\fP program is a member of the ImageMagick(1) suite of tools.  Use
+ For more information about the animate command, point your browser to file://@DOCUMENTATION_PATH@/www/animate.html or http://www.imagemagick.org/script/animate.php.
+ .SH DESCRIPTION
+ Image Settings:
++  \-alpha option        on, activate, off, deactivate, set, opaque, copy
++                        transparent, extract, background, or shape
+   \-authenticate value  decrypt image with this password
+   \-backdrop            display image centered on a backdrop
+   \-channel type        apply option to select image channels
+@@ -24,6 +26,7 @@ Image Settings:
+   \-display server      display image to this X server
+   \-dispose method      layer disposal method
+   \-dither method       apply error diffusion to image
++  \-filter type         use this filter when resizing an image
+   \-format "string"     output formatted image characteristics
+   \-gamma value         level of gamma correction
+   \-geometry geometry   preferred size and location of the Image window
+@@ -43,6 +46,7 @@ Image Settings:
+   \-quiet               suppress all warning messages
+   \-regard-warnings     pay attention to warning messages
+   \-remote command      execute a command in an remote display process
++  \-respect-parentheses settings remain in effect until parenthesis boundary
+   \-sampling-factor geometry
+                        horizontal and vertical sampling factor
+   \-scenes range        image scene range
+@@ -69,6 +73,7 @@ Image Operators:
+   \-resize geometry     resize the image
+   \-rotate degrees      apply Paeth rotation to the image
+   \-strip               strip image of all profiles and comments
++  \-thumbnail geometry  create a thumbnail of the image
+   \-trim                trim image edges
+ 
+ Image Sequence Operators:
+diff --git a/utilities/compare.1.in b/utilities/compare.1.in
+index 0c0f070..bc951a0 100644
+--- a/utilities/compare.1.in
++++ b/utilities/compare.1.in
+@@ -10,6 +10,8 @@ The \fBcompare\fP program is a member of the ImageMagick(1) suite of tools.  Use
+ For more information about the compare command, point your browser to file://@DOCUMENTATION_PATH@/www/compare.html or http://www.imagemagick.org/script/compare.php.
+ .SH DESCRIPTION
+ Image Settings:
++  \-alpha option        on, activate, off, deactivate, set, opaque, copy
++  \                     transparent, extract, background, or shape
+   \-authenticate value  decrypt image with this password
+   \-channel type        apply option to select image channels
+   \-colorspace type     alternate image colorspace
+@@ -20,6 +22,8 @@ Image Settings:
+                        define one or more image format options
+   \-density geometry    horizontal and vertical density of the image
+   \-depth value         image depth
++  \-dissimilarity-threshold value
++  \                     maximum distortion for (sub)image match
+   \-encipher filename   convert plain pixels to cipher pixels
+   \-extract geometry    extract area from image
+   \-format "string"     output formatted image characteristics
+@@ -33,11 +37,13 @@ Image Settings:
+                        de-emphasize pixel differences with this color
+   \-metric type         measure differences between images with this metric
+   \-monitor             monitor progress
++  \-passphrase filename get the passphrase from this file
+   \-profile filename    add, delete, or apply an image profile
+   \-quality value       JPEG/MIFF/PNG compression level
+   \-quiet               suppress all warning messages
+   \-quantize colorspace reduce colors in this colorspace
+   \-regard-warnings     pay attention to warning messages
++  \-respect-parentheses settings remain in effect until parenthesis boundary
+   \-sampling-factor geometry
+                        horizontal and vertical sampling factor
+   \-seed value          seed a new sequence of pseudo-random numbers
+diff --git a/utilities/composite.1.in b/utilities/composite.1.in
+index 4f0eb73..dfa12ec 100644
+--- a/utilities/composite.1.in
++++ b/utilities/composite.1.in
+@@ -11,6 +11,8 @@ For more information about the composite command, point your browser to file://@
+ .SH DESCRIPTION
+ Image Settings:
+   \-affine matrix       affine transform matrix
++  \-alpha option        on, activate, off, deactivate, set, opaque, copy
++  \                     transparent, extract, background, or shape
+   \-authenticate value  decrypt image with this password
+   \-blue-primary point  chromaticity blue primary point
+   \-channel type        apply option to select image channels
+@@ -46,6 +48,7 @@ Image Settings:
+   \-quiet               suppress all warning messages
+   \-red-primary point   chromaticity red primary point
+   \-regard-warnings     pay attention to warning messages
++  \-respect-parentheses settings remain in effect until parenthesis boundary
+   \-sampling-factor geometry
+                        horizontal and vertical sampling factor
+   \-scene value         image scene number
+@@ -66,9 +69,12 @@ Image Settings:
+ 
+ Image Operators:
+   \-blend geometry      blend images
++  \-border geometry     surround image with a border of color
++  \-bordercolor color   border color
+   \-colors value        preferred number of colors in the image
+   \-displace geometry   shift image pixels defined by a displacement map
+   \-dissolve value      dissolve the two images a given percent
++  \-distort geometry    shift lookup according to a absolute distortion map
+   \-extract geometry    extract area from image
+   \-geometry geometry   location of the composite image
+   \-identify            identify the format and characteristics of the image
+@@ -80,6 +86,7 @@ Image Operators:
+   \-rotate degrees      apply Paeth rotation to the image
+   \-resize geometry     resize the image
+   \-sharpen geometry    sharpen the image
++  \-shave geometry      shave pixels from the image edges
+   \-stegano offset      hide watermark within an image
+   \-stereo              combine two image to create a stereo anaglyph
+   \-strip               strip image of all profiles and comments
+@@ -90,6 +97,9 @@ Image Operators:
+   \-watermark geometry  percent brightness and saturation of a watermark
+   \-write filename      write images to this file
+ 
++Image Stack Operators:
++  \-swap indexes        swap two images in the image sequence
++
+ Miscellaneous Options:
+   \-debug events        display copious debugging information
+   \-help                print program options
+diff --git a/utilities/convert.1.in b/utilities/convert.1.in
+index 721c2b6..65882cc 100644
+--- a/utilities/convert.1.in
++++ b/utilities/convert.1.in
+@@ -12,8 +12,10 @@ For more information about the convert command, point your browser to file://@DO
+ Image Settings:
+   \-adjoin              join images into a single multi-image file
+   \-affine matrix       affine transform matrix
++  \-alpha option        activate, deactivate, reset, or set the alpha channel
+   \-antialias           remove pixel-aliasing
+   \-authenticate value  decrypt image with this password
++  \-attenuate value     lessen (or intensify) when adding noise to an image
+   \-background color    background color
+   \-bias value          add bias when convolving an image
+   \-black-point-compensation
+@@ -53,7 +55,11 @@ Image Settings:
+   \-green-primary point chromaticity green primary point
+   \-intent type         type of rendering intent when managing the image color
+   \-interlace type      type of image interlacing scheme
++  \-interline-spacing value
++  \                     set the space between two text lines
+   \-interpolate method  pixel color interpolation method
++  \-interword-spacing value
++  \                     set the space between two words
+   \-kerning value       set the space between two letters
+   \-label string        assign a label to an image
+   \-limit type value    pixel cache resource limit
+@@ -63,15 +69,17 @@ Image Settings:
+   \-mattecolor color    frame color
+   \-monitor             monitor progress
+   \-orient type         image orientation
+-  \-origin geometry     image origin
+   \-page geometry       size and location of an image canvas (setting)
+   \-ping                efficiently determine image attributes
+   \-pointsize value     font point size
++  \-precision value     maximum number of significant digits to print
+   \-preview type        image preview type
+   \-quality value       JPEG/MIFF/PNG compression level
+   \-quiet               suppress all warning messages
+   \-red-primary point   chromaticity red primary point
+   \-regard-warnings     pay attention to warning messages
++  \-remap filename      transform image colors to match this set of colors
++  \-respect-parentheses settings remain in effect until parenthesis boundary
+   \-sampling-factor geometry
+                        horizontal and vertical sampling factor
+   \-scene value         image scene number
+@@ -110,13 +118,20 @@ Image Operators:
+                        adaptively sharpen pixels; increase effect near edges
+   \-annotate geometry text
+                        annotate the image with text
++  \-auto-gamma          automagically adjust gamma level of image
++  \-auto-level          automagically adjust color levels of image
+   \-auto-orient         automatically orient image
++  \-bench iterations    measure performance
+   \-black-threshold value
+                        force all pixels below the threshold into black
++  \-blue-shift factor   simulate a scene at nighttime in the moonlight
+   \-blur geometry       reduce image noise and reduce detail levels
+   \-border geometry     surround image with a border of color
++  \-brightness-contrast geometry
++  \                     improve brightness / contrast of the image
+   \-charcoal radius     simulate a charcoal drawing
+   \-chop geometry       remove pixels from the image interior
++  \-clamp               restrict pixel range from 0 to the quantum depth
+   \-clip                clip along the first path from the 8BIM profile
+   \-clip-mask filename  associate a clip mask with the image
+   \-clip-path id        clip along a named path from the 8BIM profile
+@@ -128,7 +143,10 @@ Image Operators:
+   \-convolve coefficients
+                        apply a convolution kernel to the image
+   \-cycle amount        cycle the image colormap
++  \-deskew threshold    straighten an image
+   \-despeckle           reduce the speckles within an image
++  \-distort method args
++  \                     distort images according to given method ad args
+   \-draw string         annotate the image with a graphic primitive
+   \-edge radius         apply a filter to detect edges in the image
+   \-emboss radius       emboss an image
+@@ -152,11 +170,17 @@ Image Operators:
+   \-identify            identify the format and characteristics of the image
+   \-ift                 implements the inverse discrete Fourier transform (DFT)
+   \-implode amount      implode image pixels about the center
++  \-interpolative-resize geometry
++  \                     resize image using 'point sampled' interpolation
+   \-lat geometry        local adaptive thresholding
+   \-layers method       optimize or compare image layers
+   \-level value         adjust the level of image contrast
++  \-level-colors color,color
++  \                     level image with the given colors
+   \-linear-stretch geometry
+                        improve contrast by `stretching with saturation' the intensity range
++  \-liquid-rescale geometry
++  \                     rescale image with seam-carving
+   \-median geometry     apply a median filter to the image
+   \-mode geometry       make each pixel the 'predominant color' of the neighborhood
+   \-modulate value      vary the brightness, saturation, and hue
+@@ -205,6 +229,8 @@ Image Operators:
+                        lightness rescaling using sigmoidal contrast enhancement
+   \-sketch geometry     simulate a pencil sketch
+   \-solarize threshold  negate all pixels above the threshold level
++  \-sparse-color method args
++  \                     fill in a image based on a few color points
+   \-splice geometry     splice the background color into the image
+   \-spread amount       displace image pixels by a random amount
+   \-strip               strip image of all profiles and comments
+@@ -227,7 +253,6 @@ Image Operators:
+                        force all pixels above the threshold into white
+ 
+ Image Sequence Operators:
+-  \-affinity filename   transform image colors to match this set of colors
+   \-append              append an image sequence top to bottom (use +append for left to right)
+   \-clut                apply a color lookup table to the image
+   \-coalesce            merge a sequence of images
+@@ -253,6 +278,7 @@ Image Stack Operators:
+   \-duplicate count,indexes
+                        duplicate an image one or more times
+   \-insert index        insert last image into the image sequence
++  \-reverse             reverse image sequence
+   \-swap indexes        swap two images in the image sequence
+ 
+ Miscellaneous Options:
+diff --git a/utilities/display.1.in b/utilities/display.1.in
+index ebf1482..545cf5a 100644
+--- a/utilities/display.1.in
++++ b/utilities/display.1.in
+@@ -10,6 +10,8 @@ The \fBdisplay\fP program is a member of the ImageMagick(1) suite of tools.  Use
+ For more information about the display command, point your browser to file://@DOCUMENTATION_PATH@/www/display.html or http://www.imagemagick.org/script/display.php.
+ .SH DESCRIPTION
+ Image Settings:
++  \-alpha option        on, activate, off, deactivate, set, opaque, copy
++  \                     transparent, extract, background, or shape
+   \-antialias           remove pixel-aliasing
+   \-authenticate value  decrypt image with this password
+   \-backdrop            display image centered on a backdrop
+@@ -19,6 +21,7 @@ Image Settings:
+   \-comment string      annotate image with comment
+   \-compress type       type of pixel compression when writing the image
+   \-decipher filename   convert cipher pixels to plain pixels
++  \-deskew threshold    straighten an image
+   \-define format:option
+                        define one or more image format options
+   \-delay value         display the next image after pausing
+@@ -52,6 +55,7 @@ Image Settings:
+   \-regard-warnings     pay attention to warning messages
+   \-remote command      execute a command in an remote display process
+   \-repage geometry     size and location of an image canvas (operator)
++  \-respect-parentheses settings remain in effect until parenthesis boundary
+   \-sampling-factor geometry
+                        horizontal and vertical sampling factor
+   \-scenes range        image scene range
+@@ -90,6 +94,7 @@ Image Operators:
+   \-gamma value         level of gamma correction
+   \-monochrome          transform image to black and white
+   \-negate              replace each pixel with its complementary color
++  \-normalize           transform image to span the full range of colors
+   \-raise value         lighten/darken image edges to create a 3-D effect
+   \-resample geometry   change the resolution of an image
+   \-resize geometry     resize the image
+@@ -99,6 +104,8 @@ Image Operators:
+   \-segment value       segment an image
+   \-sharpen geometry    sharpen the image
+   \-strip               strip image of all profiles and comments
++  \-threshold value     threshold the image
++  \-thumbnail geometry  create a thumbnail of the image
+   \-trim                trim image edges
+ 
+ Image Sequence Operators:
+diff --git a/utilities/identify.1.in b/utilities/identify.1.in
+index 644592b..15c408a 100644
+--- a/utilities/identify.1.in
++++ b/utilities/identify.1.in
+@@ -10,9 +10,12 @@ The \fBidentify\fP program is a member of the ImageMagick(1) suite of tools.  It
+ For more information about the identify command, point your browser to file://@DOCUMENTATION_PATH@/www/identify.html or http://www.imagemagick.org/script/identify.php.
+ .SH DESCRIPTION
+ Image Settings:
++  \-alpha option        on, activate, off, deactivate, set, opaque, copy
++                       transparent, extract, background, or shape
+   \-antialias           remove pixel-aliasing
+   \-authenticate value  decrypt image with this password
+   \-channel type        apply option to select image channels
++  \-colorspace type     alternate image colorspace
+   \-crop geometry       cut out a rectangular region of the image
+   \-define format:option
+                        define one or more image format options
+@@ -23,6 +26,7 @@ Image Settings:
+   \-features distance   analyze image features (e.g. contrast, correlation)
+   \-format "string"     output formatted image characteristics
+   \-fuzz distance       colors within this distance are considered equal
++  \-gamma value         of gamma correction
+   \-interlace type      type of image interlacing scheme
+   \-interpolate method  pixel color interpolation method
+   \-limit type value    pixel cache resource limit
+@@ -33,6 +37,7 @@ Image Settings:
+   \-ping                efficiently determine image attributes
+   \-quiet               suppress all warning messages
+   \-regard-warnings     pay attention to warning messages
++  \-respect-parentheses settings remain in effect until parenthesis boundary
+   \-sampling-factor geometry
+                        horizontal and vertical sampling factor
+   \-seed value          seed a new sequence of pseudo-random numbers
+@@ -51,8 +56,8 @@ Image Operators:
+ Miscellaneous Options:
+   \-debug events        display copious debugging information
+   \-help                print program options
+-  \-log format          format of debugging information
+   \-list type           print a list of supported option arguments
++  \-log format          format of debugging information
+   \-version             print version information
+ 
+ By default, the image format of `file' is determined by its magic number.  To specify a particular image format, precede the filename with an image format name and a colon (i.e. ps:image) or specify the image type as the filename suffix (i.e. image.ps).  Specify 'file' as '-' for standard input or output.
+diff --git a/utilities/import.1.in b/utilities/import.1.in
+index e84dae5..d8ee780 100644
+--- a/utilities/import.1.in
++++ b/utilities/import.1.in
+@@ -28,6 +28,7 @@ Image Settings:
+   \-encipher filename   convert plain pixels to cipher pixels
+   \-endian type         endianness (MSB or LSB) of the image
+   \-encoding type       text encoding type
++  \-filter type         use this filter when resizing an image
+   \-format "string"     output formatted image characteristics
+   \-frame               include window manager frame
+   \-gravity direction   which direction to gravitate towards
+@@ -43,6 +44,7 @@ Image Settings:
+   \-quality value       JPEG/MIFF/PNG compression level
+   \-quiet               suppress all warning messages
+   \-regard-warnings     pay attention to warning messages
++  \-respect-parentheses settings remain in effect until parenthesis boundary
+   \-sampling-factor geometry
+                        horizontal and vertical sampling factor
+   \-scene value         image scene number
+diff --git a/utilities/mogrify.1.in b/utilities/mogrify.1.in
+index 83e61ab..b058c50 100644
+--- a/utilities/mogrify.1.in
++++ b/utilities/mogrify.1.in
+@@ -12,8 +12,10 @@ For more information about the mogrify command, point your browser to file://@DO
+ Image Settings:
+   \-adjoin              join images into a single multi-image file
+   \-affine matrix       affine transform matrix
++  \-alpha option        activate, deactivate, reset, or set the alpha channel
+   \-antialias           remove pixel-aliasing
+   \-authenticate value  decrypt image with this password
++  \-attenuate value     lessen (or intensify) when adding noise to an image
+   \-background color    background color
+   \-bias value          add bias when convolving an image
+   \-black-point-compensation
+@@ -54,7 +56,9 @@ Image Settings:
+   \-green-primary point chromaticity green primary point
+   \-intent type         type of rendering intent when managing the image color
+   \-interlace type      type of image interlacing scheme
++  \-interline-spacing   value set the space between two text lines
+   \-interpolate method  pixel color interpolation method
++  \-interword-spacing   value set the space between two words
+   \-kerning value       set the space between two letters
+   \-label string        assign a label to an image
+   \-limit type value    pixel cache resource limit
+@@ -66,16 +70,18 @@ Image Settings:
+   \-morphology method kernel
+                        apply a morphology method to the image
+   \-orient type         image orientation
+-  \-origin geometry     image origin
+   \-page geometry       size and location of an image canvas (setting)
+   \-path path           write images to this path on disk
+   \-ping                efficiently determine image attributes
+   \-pointsize value     font point size
++  \-precision value     maximum number of significant digits to print
+   \-preview type        image preview type
+   \-quality value       JPEG/MIFF/PNG compression level
+   \-quiet               suppress all warning messages
+   \-red-primary point   chromaticity red primary point
+   \-regard-warnings     pay attention to warning messages
++  \-remap filename      transform image colors to match this set of colors
++  \-respect-parentheses settings remain in effect until parenthesis boundary
+   \-sampling-factor geometry
+                        horizontal and vertical sampling factor
+   \-scene value         image scene number
+@@ -85,7 +91,6 @@ Image Settings:
+   \-stroke color        graphic primitive stroke color
+   \-strokewidth value   graphic primitive stroke width
+   \-style type          render text with this font style
+-  \-support factor      resize support: > 1.0 is blurry, < 1.0 is sharp
+   \-synchronize         synchronize image to storage device
+   \-taint               declare the image as modified
+   \-texture filename    name of texture to tile onto the image background
+@@ -110,15 +115,26 @@ Image Operators:
+                        adaptively resize image with data dependent triangulation
+   \-adaptive-sharpen geometry
+                        adaptively sharpen pixels; increase effect near edges
++  \-alpha option        on, activate, off, deactivate, set, opaque, copy
++                       transparent, extract, background, or shape
+   \-annotate geometry text
+                        annotate the image with text
+-  \-auto-orient         automatically orient image
++  \-auto-gamma          automagically adjust gamma level of image
++  \-auto-level          automagically adjust color levels of image
++  \-auto-orient         automagically orient (rotate) image
++  \-bench iterations    measure performance
+   \-black-threshold value
+                        force all pixels below the threshold into black
++  \-blue-shift          simulate a scene at nighttime in the moonlight
+   \-blur geometry       reduce image noise and reduce detail levels
+   \-border geometry     surround image with a border of color
++  \-bordercolor color   border color
++  \-brightness-contrast geometry
++                       improve brightness / contrast of the image
++  \-cdl filename        color correct with a color decision list
+   \-charcoal radius     simulate a charcoal drawing
+   \-chop geometry       remove pixels from the image interior
++  \-clamp               restrict pixel range from 0 to the quantum depth
+   \-clip                clip along the first path from the 8BIM profile
+   \-clip-mask filename  associate a clip mask with the image
+   \-clip-path id        clip along a named path from the 8BIM profile
+@@ -130,9 +146,14 @@ Image Operators:
+   \-convolve coefficients
+                        apply a convolution kernel to the image
+   \-cycle amount        cycle the image colormap
++  \-decipher filename   convert cipher pixels to plain pixels
++  \-deskew threshold    straighten an image
+   \-despeckle           reduce the speckles within an image
++  \-distort method args
++                       distort images according to given method ad args
+   \-draw string         annotate the image with a graphic primitive
+   \-edge radius         apply a filter to detect edges in the image
++  \-encipher filename   convert plain pixels to cipher pixels
+   \-emboss radius       emboss an image
+   \-enhance             apply a digital filter to enhance a noisy image
+   \-equalize            perform histogram equalization to an image
+@@ -140,29 +161,38 @@ Image Operators:
+                        evaluate an arithmetic, relational, or logical expression
+   \-extent geometry     set the image size
+   \-extract geometry    extract area from image
++  \-features distance   analyze image features (e.g. contrast, correlation)
+   \-fft                 implements the discrete Fourier transform (DFT)
+   \-flip                flip image vertically
+   \-floodfill geometry color
+                        floodfill the image with color
+   \-flop                flop image horizontally
+   \-frame geometry      surround image with an ornamental border
++  \-function name parameters
++                       apply function over image values
+   \-gamma value         level of gamma correction
+   \-gaussian-blur geometry
+                        reduce image noise and reduce detail levels
+   \-geometry geometry   preferred size or location of the image
+-  \-ift                 implements the inverse discrete Fourier transform (DFT)
+   \-help                print program options
+   \-identify            identify the format and characteristics of the image
++  \-ift                 implements the inverse discrete Fourier transform (DFT)
+   \-implode amount      implode image pixels about the center
+   \-lat geometry        local adaptive thresholding
+-  \-layers method       optimize or compare image layers
++  \-layers method       optimize, merge,  or compare image layers
+   \-level value         adjust the level of image contrast
++  \-level-colors color,color
++                       level image with the given colors
+   \-linear-stretch geometry
+                        improve contrast by `stretching with saturation' the intensity range
++  \-liquid-rescale geometry
++                       rescale image with seam-carving
+   \-median geometry     apply a median filter to the image
+   \-mode geometry       make each pixel the 'predominant color' of the neighborhood
+   \-modulate value      vary the brightness, saturation, and hue
+   \-monochrome          transform image to black and white
++  \-morphology method kernel
++                       apply a morphology method to the image
+   \-motion-blur geometry
+                        simulate motion blur
+   \-negate              replace each pixel with its complementary color 
+@@ -205,6 +235,8 @@ Image Operators:
+                        lightness rescaling using sigmoidal contrast enhancement
+   \-sketch geometry     simulate a pencil sketch
+   \-solarize threshold  negate all pixels above the threshold level
++  \-sparse-color method args
++                       fill in a image based on a few color points
+   \-splice geometry     splice the background color into the image
+   \-spread amount       displace image pixels by a random amount
+   \-statistic type geometry
+@@ -254,6 +286,7 @@ Image Stack Operators:
+   \-duplicate count,indexes
+                        duplicate an image one or more times
+   \-insert index        insert last image into the image sequence
++  \-reverse             reverse image sequence
+   \-swap indexes        swap two images in the image sequence
+ 
+ Miscellaneous Options:
+diff --git a/utilities/montage.1.in b/utilities/montage.1.in
+index c10268f..81099da 100644
+--- a/utilities/montage.1.in
++++ b/utilities/montage.1.in
+@@ -12,9 +12,12 @@ For more information about the montage command, point your browser to file://@DO
+ Image Settings:
+   \-adjoin              join images into a single multi-image file
+   \-affine matrix       affine transform matrix
++  \-alpha option        on, activate, off, deactivate, set, opaque, copy
++  \                     transparent, extract, background, or shape
+   \-authenticate value  decrypt image with this password
+   \-blue-primary point  chromaticity blue primary point
+   \-bordercolor color   border color
++  \-caption string      assign a caption to an image
+   \-channel type        apply option to select image channels
+   \-colors value        preferred number of colors in the image
+   \-colorspace type     alternate image colorsapce
+@@ -50,6 +53,7 @@ Image Settings:
+   \-mattecolor color    frame color
+   \-mode type           framing style
+   \-monitor             monitor progress
++  \-origin geometry     image origin
+   \-page geometry       size and location of an image canvas (setting)
+   \-pointsize value     font point size
+   \-profile filename    add, delete, or apply an image profile
+@@ -58,6 +62,7 @@ Image Settings:
+   \-quiet               suppress all warning messages
+   \-red-primary point   chromaticity red primary point
+   \-regard-warnings     pay attention to warning messages
++  \-respect-parentheses settings remain in effect until parenthesis boundary
+   \-sampling-factor geometry
+                        horizontal and vertical sampling factor
+   \-scenes range        image scene range
+@@ -68,6 +73,7 @@ Image Settings:
+   \-stroke color        color to use when stroking a graphic primitive
+   \-support factor      resize support: > 1.0 is blurry, < 1.0 is sharp
+   \-synchronize         synchronize image to storage device
++  \-taint               declare the image as modified
+   \-texture filename    name of texture to tile onto the image background
+   \-thumbnail geometry  create a thumbnail of the image
+   \-tile geometry       number of tiles per row and column
+@@ -87,9 +93,11 @@ Image Operators:
+                        adaptively sharpen pixels; increase effect near edges
+   \-annotate geometry text
+                        annotate the image with text
++  \-auto-orient         automagically orient image
+   \-blur geometry      reduce image noise and reduce detail levels
+   \-border geometry     surround image with a border of color
+   \-crop geometry       preferred size and location of the cropped image
++  \-extent geometry     set the image size
+   \-flatten             flatten a sequence of images
+   \-flip                flip image in the vertical direction
+   \-flop                flop image in the horizontal direction
+@@ -101,12 +109,14 @@ Image Operators:
+   \-rotate degrees      apply Paeth rotation to the image
+   \-strip               strip image of all profiles and comments
+   \-transform           affine transform image
++  \-transpose           flip image vertically and rotate 90 degrees
+   \-transparent color   make this color transparent within the image
+   \-type type           image type
+   \-unsharp geometry    sharpen the image
+ 
+ Image Sequence Operators:
+   \-coalesce            merge a sequence of images
++  \-composite           composite image
+ 
+ Image Stack Operators:
+   \-clone indexes       clone an image
+@@ -114,6 +124,7 @@ Image Stack Operators:
+   \-duplicate count,indexes
+                         duplicate an image one or more times
+   \-insert index        insert last image into the image sequence
++  \-reverse             reverse image sequence
+   \-swap indexes        swap two images in the image sequence
+ 
+ Miscellaneous Options:
+diff --git a/utilities/stream.1.in b/utilities/stream.1.in
+index a0ed253..f1f615c 100644
+--- a/utilities/stream.1.in
++++ b/utilities/stream.1.in
+@@ -28,6 +28,7 @@ Image Settings:
+   \-quantize colorspace reduce colors in this colorspace
+   \-quiet               suppress all warning messages
+   \-regard-warnings     pay attention to warning messages
++  \-respect-parentheses settings remain in effect until parenthesis boundary
+   \-sampling-factor geometry
+                        horizontal and vertical sampling factor
+   \-seed value          seed a new sequence of pseudo-random numbers
+@@ -35,6 +36,7 @@ Image Settings:
+   \-size geometry       width and height of image
+   \-storage-type type   pixel storage type
+   \-synchronize         synchronize image to storage device
++  \-taint               declare the image as modified
+   \-transparent-color color
+                        transparent color
+   \-verbose             print detailed information about the image
+diff --git a/wand/animate.c b/wand/animate.c
+index c400052..e115106 100644
+--- a/wand/animate.c
++++ b/wand/animate.c
+@@ -155,6 +155,7 @@ static MagickBooleanType AnimateUsage(void)
+       "-interpolate method  pixel color interpolation method",
+       "-limit type value    pixel cache resource limit",
+       "-loop iterations     loop images then exit",
++      "-matte               store matte channel if the image has one",
+       "-map type            display image using this Standard Colormap",
+       "-monitor             monitor progress",
+       "-pause               seconds to pause before reanimating",
+@@ -166,9 +167,11 @@ static MagickBooleanType AnimateUsage(void)
+       "-respect-parentheses settings remain in effect until parenthesis boundary",
+       "-sampling-factor geometry",
+       "                     horizontal and vertical sampling factor",
++      "-scenes range        image scene range",
+       "-seed value          seed a new sequence of pseudo-random numbers",
+       "-set attribute value set an image attribute",
+       "-size geometry       width and height of image",
++      "-support factor      resize support: > 1.0 is blurry, < 1.0 is sharp",
+       "-transparent-color color",
+       "                     transparent color",
+       "-treedepth value     color tree depth",
+diff --git a/wand/compare.c b/wand/compare.c
+index 3b932bd..d1574f5 100644
+--- a/wand/compare.c
++++ b/wand/compare.c
+@@ -138,6 +138,8 @@ static MagickBooleanType CompareUsage(void)
+       "-quality value       JPEG/MIFF/PNG compression level",
+       "-size geometry       width and height of image",
+       "-subimage-search     search for subimage",
++      "-synchronize         synchronize image to storage device",
++      "-taint               declare the image as modified",
+       "-transparent-color color",
+       "                     transparent color",
+       "-type type           image type",
+diff --git a/wand/composite.c b/wand/composite.c
+index 8be851d..bbc36d3 100644
+--- a/wand/composite.c
++++ b/wand/composite.c
+@@ -304,6 +304,7 @@ static MagickBooleanType CompositeUsage(void)
+       "-interpolate method  pixel color interpolation method",
+       "-label string        assign a label to an image",
+       "-limit type value    pixel cache resource limit",
++      "-matte               store matte channel if the image has one",
+       "-monitor             monitor progress",
+       "-page geometry       size and location of an image canvas (setting)",
+       "-pointsize value     font point size",
+@@ -317,6 +318,7 @@ static MagickBooleanType CompositeUsage(void)
+       "-scene value         image scene number",
+       "-seed value          seed a new sequence of pseudo-random numbers",
+       "-size geometry       width and height of image",
++      "-support factor      resize support: > 1.0 is blurry, < 1.0 is sharp",
+       "-synchronize         synchronize image to storage device",
+       "-taint               declare the image as modified",
+       "-transparent-color color",
+diff --git a/wand/convert.c b/wand/convert.c
+index 1838fa7..d1fb504 100644
+--- a/wand/convert.c
++++ b/wand/convert.c
+@@ -375,6 +375,7 @@ static MagickBooleanType ConvertUsage(void)
+       "-limit type value    pixel cache resource limit",
+       "-loop iterations     add Netscape loop extension to your GIF animation",
+       "-mask filename       associate a mask with the image",
++      "-matte               store matte channel if the image has one",
+       "-mattecolor color    frame color",
+       "-monitor             monitor progress",
+       "-orient type         image orientation",
+@@ -398,6 +399,7 @@ static MagickBooleanType ConvertUsage(void)
+       "-stroke color        graphic primitive stroke color",
+       "-strokewidth value   graphic primitive stroke width",
+       "-style type          render text with this font style",
++      "-support factor      resize support: > 1.0 is blurry, < 1.0 is sharp",
+       "-synchronize         synchronize image to storage device",
+       "-taint               declare the image as modified",
+       "-texture filename    name of texture to tile onto the image background",
+diff --git a/wand/display.c b/wand/display.c
+index 9bd2bbf..a4ee63a 100644
+--- a/wand/display.c
++++ b/wand/display.c
+@@ -185,6 +185,7 @@ static MagickBooleanType DisplayUsage(void)
+       "-limit type value    pixel cache resource limit",
+       "-loop iterations     loop images then exit",
+       "-map type            display image using this Standard Colormap",
++      "-matte               store matte channel if the image has one",
+       "-monitor             monitor progress",
+       "-page geometry       size and location of an image canvas",
+       "-profile filename    add, delete, or apply an image profile",
+@@ -197,9 +198,11 @@ static MagickBooleanType DisplayUsage(void)
+       "-respect-parentheses settings remain in effect until parenthesis boundary",
+       "-sampling-factor geometry",
+       "                     horizontal and vertical sampling factor",
++      "-scenes range        image scene range",
+       "-seed value          seed a new sequence of pseudo-random numbers",
+       "-set property value  set an image property",
+       "-size geometry       width and height of image",
++      "-support factor      resize support: > 1.0 is blurry, < 1.0 is sharp",
+       "-texture filename    name of texture to tile onto the image background",
+       "-transparent-color color",
+       "                     transparent color",
+diff --git a/wand/identify.c b/wand/identify.c
+index 441f591..afa0b68 100644
+--- a/wand/identify.c
++++ b/wand/identify.c
+@@ -122,6 +122,7 @@ static MagickBooleanType IdentifyUsage(void)
+       "-crop geometry       cut out a rectangular region of the image",
+       "-define format:option",
+       "                     define one or more image format options",
++      "-define unique=true  return the number of unique colors in the image",
+       "-density geometry    horizontal and vertical density of the image",
+       "-depth value         image depth",
+       "-extract geometry    extract area from image",
+@@ -132,6 +133,9 @@ static MagickBooleanType IdentifyUsage(void)
+       "-interlace type      type of image interlacing scheme",
+       "-interpolate method  pixel color interpolation method",
+       "-limit type value    pixel cache resource limit",
++      "-list type           Color, Configure, Delegate, Format, Magic, Module,",
++      "                    Resource, or Type",
++      "-matte               store matte channel if the image has one",
+       "-monitor             monitor progress",
+       "-ping                efficiently determine image attributes",
+       "-quiet               suppress all warning messages",
+diff --git a/wand/import.c b/wand/import.c
+index 1cba0fc..8b0708e 100644
+--- a/wand/import.c
++++ b/wand/import.c
+@@ -172,6 +172,7 @@ static MagickBooleanType ImportUsage(void)
+       "-set property value  set an image property",
+       "-silent              operate silently, i.e. don't ring any bells ",
+       "-snaps value         number of screen snapshots",
++      "-support factor      resize support: > 1.0 is blurry, < 1.0 is sharp",
+       "-synchronize         synchronize image to storage device",
+       "-taint               declare the image as modified",
+       "-transparent-color color",
+diff --git a/wand/mogrify.c b/wand/mogrify.c
+index 8b8ccc8..0957f58 100644
+--- a/wand/mogrify.c
++++ b/wand/mogrify.c
+@@ -3359,6 +3359,7 @@ static MagickBooleanType MogrifyUsage(void)
+       "-gaussian-blur geometry",
+       "                     reduce image noise and reduce detail levels",
+       "-geometry geometry   preferred size or location of the image",
++      "-help                print program options",
+       "-identify            identify the format and characteristics of the image",
+       "-ift                 implements the inverse discrete Fourier transform (DFT)",
+       "-implode amount      implode image pixels about the center",
+@@ -3447,6 +3448,7 @@ static MagickBooleanType MogrifyUsage(void)
+     },
+     *sequence_operators[]=
+     {
++      "-affinity filename   transform image colors to match this set of colors",
+       "-append              append an image sequence",
+       "-clut                apply a color lookup table to the image",
+       "-coalesce            merge a sequence of images",
+@@ -3484,12 +3486,14 @@ static MagickBooleanType MogrifyUsage(void)
+       "-blue-primary point  chromaticity blue primary point",
+       "-bordercolor color   border color",
+       "-caption string      assign a caption to an image",
++      "-cdl filename        color correct with a color decision list",
+       "-channel type        apply option to select image channels",
+       "-colors value        preferred number of colors in the image",
+       "-colorspace type     alternate image colorspace",
+       "-comment string      annotate image with comment",
+       "-compose operator    set image composite operator",
+       "-compress type       type of pixel compression when writing the image",
++      "-decipher filename   convert cipher pixels to plain pixels",
+       "-define format:option",
+       "                     define one or more image format options",
+       "-delay value         display the next image after pausing",
+@@ -3499,13 +3503,17 @@ static MagickBooleanType MogrifyUsage(void)
+       "-display server      get image or font from this X server",
+       "-dispose method      layer disposal method",
+       "-dither method       apply error diffusion to image",
++      "-encipher filename   convert plain pixels to cipher pixels",
+       "-encoding type       text encoding type",
+       "-endian type         endianness (MSB or LSB) of the image",
+       "-family name         render text with this font family",
++      "-features distance   analyze image features (e.g. contrast, correlation)",
+       "-fill color          color to use when filling a graphic primitive",
+       "-filter type         use this filter when resizing an image",
++      "-flatten             flatten a sequence of images",
+       "-font name           render text with this font",
+       "-format \"string\"     output formatted image characteristics",
++      "-function name       apply a function to the image",
+       "-fuzz distance       colors within this distance are considered equal",
+       "-gravity type        horizontal and vertical text placement",
+       "-green-primary point chromaticity green primary point",
+@@ -3521,10 +3529,14 @@ static MagickBooleanType MogrifyUsage(void)
+       "-limit type value    pixel cache resource limit",
+       "-loop iterations     add Netscape loop extension to your GIF animation",
+       "-mask filename       associate a mask with the image",
++      "-matte               store matte channel if the image has one",
+       "-mattecolor color    frame color",
+       "-monitor             monitor progress",
++      "-morphology method kernel",
++      "                     apply a morphology method to the image",
+       "-orient type         image orientation",
+       "-page geometry       size and location of an image canvas (setting)",
++      "-path path           write images to this path on disk",
+       "-ping                efficiently determine image attributes",
+       "-pointsize value     font point size",
+       "-precision value     maximum number of significant digits to print",
+diff --git a/wand/montage.c b/wand/montage.c
+index 5a615c8..912c469 100644
+--- a/wand/montage.c
++++ b/wand/montage.c
+@@ -100,7 +100,7 @@ static MagickBooleanType MontageUsage(void)
+     {
+       "-adaptive-sharpen geometry",
+       "                     adaptively sharpen pixels; increase effect near edges",
+-      " annotate geometry text",
++      "-annotate geometry text",
+       "                     annotate the image with text",
+       "-auto-orient         automagically orient image",
+       "-blur geometry      reduce image noise and reduce detail levels",
+@@ -166,6 +166,7 @@ static MagickBooleanType MontageUsage(void)
+       "-kerning value       set the space between two letters",
+       "-label string        assign a label to an image",
+       "-limit type value    pixel cache resource limit",
++      "-matte               store matte channel if the image has one",
+       "-mattecolor color    frame color",
+       "-mode type           framing style",
+       "-monitor             monitor progress",
+@@ -187,6 +188,7 @@ static MagickBooleanType MontageUsage(void)
+       "-shadow              add a shadow beneath a tile to simulate depth",
+       "-size geometry       width and height of image",
+       "-stroke color        color to use when stroking a graphic primitive",
++      "-support factor      resize support: > 1.0 is blurry, < 1.0 is sharp",
+       "-synchronize         synchronize image to storage device",
+       "-taint               declare the image as modified",
+       "-texture filename    name of texture to tile onto the image background",
+-- 
+1.8.3.1
+
